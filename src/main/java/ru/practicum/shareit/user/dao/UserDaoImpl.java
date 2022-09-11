@@ -33,21 +33,23 @@ public final class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public Stream<User> getUsers() { return users.values().stream(); }
+    public Stream<User> getUsers() {
+        return users.values().stream();
+    }
 
     @Override
     public Optional<User> updateUser(final User user) {
         return getUser(user.getId())
-                .map(u -> {
-                    final String email = user.getEmail();
-                    if (!email.equals(u.getEmail()) && emails.contains(email)) {
-                        throw new DuplicateValueException(email);
-                    }
-                    emails.remove(u.getEmail());
-                    emails.add(email);
-                    users.replace(user.getId(), user);
-                    return user;
-                });
+            .map(u -> {
+                final String email = user.getEmail();
+                if (!email.equals(u.getEmail()) && emails.contains(email)) {
+                    throw new DuplicateValueException(email);
+                }
+                emails.remove(u.getEmail());
+                emails.add(email);
+                users.replace(user.getId(), user);
+                return user;
+            });
     }
 
     @Override

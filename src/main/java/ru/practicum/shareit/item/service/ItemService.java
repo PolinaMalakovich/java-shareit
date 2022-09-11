@@ -8,9 +8,14 @@ import java.util.stream.Stream;
 
 public interface ItemService {
     ItemDto addItem(long id, ItemDto itemDto);
+
     ItemDto getItem(long id);
+
     Stream<ListItemDto> getItems(long id);
+
     ItemDto updateItem(long id, long itemId, PatchItemDto patchItemDto);
+
     void deleteItem(long id, long itemId);
+
     Stream<ItemDto> searchItem(String text);
 }

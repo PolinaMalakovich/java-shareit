@@ -18,6 +18,13 @@ public class ItemDaoImpl implements ItemDao {
     private final Map<Long, List<Long>> ownerItems = new HashMap<>();
     private long id = 1;
 
+    private static boolean isAvailableAndHasText(final Item item, final String line) {
+        final String name = item.getName().toLowerCase();
+        final String description = item.getDescription().toLowerCase();
+
+        return item.isAvailable() && (name.contains(line) || description.contains(line));
+    }
+
     @Override
     public Item addItem(final Item item) {
         final Item newItem = item.withId(id++);
@@ -37,15 +44,17 @@ public class ItemDaoImpl implements ItemDao {
         return ownerItems.getOrDefault(id, List.of()).stream().map(items::get);
     }
 
-    private Stream<Item> getItems() { return items.values().stream(); }
+    private Stream<Item> getItems() {
+        return items.values().stream();
+    }
 
     @Override
     public Optional<Item> updateItem(final Item item) {
         return getItem(item.getId())
-                .map(i -> {
-                    items.replace(item.getId(), item);
-                    return item;
-                });
+            .map(i -> {
+                items.replace(item.getId(), item);
+                return item;
+            });
     }
 
     @Override
@@ -60,12 +69,5 @@ public class ItemDaoImpl implements ItemDao {
         final String line = text.toLowerCase().trim();
 
         return line.isEmpty() ? Stream.empty() : getItems().filter(item -> isAvailableAndHasText(item, line));
-    }
-
-    private static boolean isAvailableAndHasText(final Item item, final String line) {
-        final String name = item.getName().toLowerCase();
-        final String description = item.getDescription().toLowerCase();
-
-        return item.isAvailable() && (name.contains(line) || description.contains(line));
     }
 }

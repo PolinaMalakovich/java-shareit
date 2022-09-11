@@ -19,12 +19,12 @@ public class PatchItemDto {
 
     public ItemDto patch(ItemDto itemDto) {
         return new ItemDto(
-                itemDto.getId(),
-                this.name == null ? itemDto.getName() : this.name,
-                this.description == null ? itemDto.getDescription() : this.description,
-                this.available == null ? itemDto.isAvailable() : this.available,
-                itemDto.getOwner(),
-                itemDto.getRequest()
+            itemDto.getId(),
+            this.name == null ? itemDto.getName() : this.name,
+            this.description == null ? itemDto.getDescription() : this.description,
+            this.available == null ? itemDto.isAvailable() : this.available,
+            itemDto.getOwner(),
+            itemDto.getRequest()
         );
     }
 }

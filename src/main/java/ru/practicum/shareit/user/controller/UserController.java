@@ -26,7 +26,9 @@ public class UserController {
     }
 
     @GetMapping
-    public Stream<UserDto> getUsers() { return userService.getUsers(); }
+    public Stream<UserDto> getUsers() {
+        return userService.getUsers();
+    }
 
     @PatchMapping("/{id}")
     public UserDto updateUser(@PathVariable final long id, @Valid @RequestBody final PatchUserDto patchUserDto) {

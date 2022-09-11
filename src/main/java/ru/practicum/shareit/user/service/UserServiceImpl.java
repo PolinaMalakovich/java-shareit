@@ -39,14 +39,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Stream<UserDto> getUsers() { return userDao.getUsers().map(UserMapper::toUserDto); }
+    public Stream<UserDto> getUsers() {
+        return userDao.getUsers().map(UserMapper::toUserDto);
+    }
 
     @Override
     public UserDto updateUser(final long id, final PatchUserDto patchUserDto) {
         final UserDto user = getUser(id);
         final UserDto userDto = patchUserDto.patch(user);
         userDao.updateUser(UserMapper.toUser(userDto))
-                .orElseThrow(() -> new EntityNotFoundException("User", userDto.getId()));
+            .orElseThrow(() -> new EntityNotFoundException("User", userDto.getId()));
         log.info("User " + userDto.getId() + " updated successfully.");
 
         return userDto;

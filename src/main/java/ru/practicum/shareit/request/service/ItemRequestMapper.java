@@ -7,17 +7,17 @@ import ru.practicum.shareit.user.service.UserMapper;
 public class ItemRequestMapper {
     public static ItemRequestDto toItemRequestDto(final ItemRequest itemRequest) {
         return new ItemRequestDto(
-                itemRequest.getId(),
-                itemRequest.getDescription(),
-                UserMapper.toUserDto(itemRequest.getRequester()),
-                itemRequest.getCreated());
+            itemRequest.getId(),
+            itemRequest.getDescription(),
+            UserMapper.toUserDto(itemRequest.getRequester()),
+            itemRequest.getCreated());
     }
 
     public static ItemRequest toItemRequest(final ItemRequestDto itemRequestDto) {
         return new ItemRequest(
-                itemRequestDto.getId(),
-                itemRequestDto.getDescription(),
-                UserMapper.toUser(itemRequestDto.getRequester()),
-                itemRequestDto.getCreated());
+            itemRequestDto.getId(),
+            itemRequestDto.getDescription(),
+            UserMapper.toUser(itemRequestDto.getRequester()),
+            itemRequestDto.getCreated());
     }
 }

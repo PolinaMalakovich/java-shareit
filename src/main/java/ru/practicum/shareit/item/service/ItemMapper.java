@@ -9,23 +9,23 @@ import ru.practicum.shareit.user.service.UserMapper;
 public class ItemMapper {
     public static ItemDto toItemDto(final Item item) {
         return new ItemDto(
-                item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.isAvailable(),
-                UserMapper.toUserDto(item.getOwner()),
-                item.getRequest() == null ? null : ItemRequestMapper.toItemRequestDto(item.getRequest())
+            item.getId(),
+            item.getName(),
+            item.getDescription(),
+            item.isAvailable(),
+            UserMapper.toUserDto(item.getOwner()),
+            item.getRequest() == null ? null : ItemRequestMapper.toItemRequestDto(item.getRequest())
         );
     }
 
     public static Item toItem(final ItemDto itemDto) {
         return new Item(
-                itemDto.getId(),
-                itemDto.getName(),
-                itemDto.getDescription(),
-                itemDto.isAvailable(),
-                UserMapper.toUser(itemDto.getOwner()),
-                itemDto.getRequest() == null ? null : ItemRequestMapper.toItemRequest(itemDto.getRequest())
+            itemDto.getId(),
+            itemDto.getName(),
+            itemDto.getDescription(),
+            itemDto.isAvailable(),
+            UserMapper.toUser(itemDto.getOwner()),
+            itemDto.getRequest() == null ? null : ItemRequestMapper.toItemRequest(itemDto.getRequest())
         );
     }
 

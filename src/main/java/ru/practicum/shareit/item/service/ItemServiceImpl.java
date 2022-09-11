@@ -26,7 +26,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto addItem(final long id, final ItemDto itemDto) {
         final UserDto owner = UserMapper.toUserDto(
-                userDao.getUser(id).orElseThrow(() -> new EntityNotFoundException("User", id))
+            userDao.getUser(id).orElseThrow(() -> new EntityNotFoundException("User", id))
         );
         final Item newItem = itemDao.addItem(ItemMapper.toItem(itemDto.withOwner(owner)));
         log.info("New item created successfully.");
@@ -54,7 +54,7 @@ public class ItemServiceImpl implements ItemService {
         }
         final ItemDto newItemDto = patchItemDto.patch(itemDto);
         itemDao.updateItem(ItemMapper.toItem(newItemDto))
-                .orElseThrow(() -> new EntityNotFoundException("Item", newItemDto.getId()));
+            .orElseThrow(() -> new EntityNotFoundException("Item", newItemDto.getId()));
         log.info("Item " + newItemDto.getId() + " updated successfully.");
 
         return newItemDto;

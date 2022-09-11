@@ -14,9 +14,9 @@ public class PatchUserDto {
 
     public UserDto patch(UserDto userDto) {
         return new UserDto(
-                userDto.getId(),
-                this.name == null ? userDto.getName() : this.name,
-                this.email == null ? userDto.getEmail() : this.email
+            userDto.getId(),
+            this.name == null ? userDto.getName() : this.name,
+            this.email == null ? userDto.getEmail() : this.email
         );
     }
 }
