@@ -1,7 +1,7 @@
 package ru.practicum.shareit.user.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.EntityNotFoundException;
 import ru.practicum.shareit.user.dao.UserDao;
@@ -13,13 +13,9 @@ import java.util.stream.Stream;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserDao userDao;
-
-    @Autowired
-    public UserServiceImpl(final UserDao userDao) {
-        this.userDao = userDao;
-    }
 
     @Override
     public UserDto addUser(final UserDto userDto) {

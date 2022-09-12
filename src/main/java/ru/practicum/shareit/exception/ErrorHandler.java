@@ -1,5 +1,6 @@
 package ru.practicum.shareit.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,15 +15,20 @@ import static java.util.stream.Collectors.toMap;
 import static org.springframework.http.HttpStatus.*;
 import static ru.practicum.shareit.util.StringUtils.suffix;
 
+@Slf4j
 @RestControllerAdvice
 public final class ErrorHandler {
     @ExceptionHandler
     public ResponseEntity<String> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
+        log.error(e.getMessage());
+
         return new ResponseEntity<>(e.getMessage(), BAD_REQUEST);
     }
 
     @ExceptionHandler
     public ResponseEntity<String> handleValidationException(final ValidationException e) {
+        log.error(e.getMessage());
+
         return new ResponseEntity<>(e.getMessage(), BAD_REQUEST);
     }
 
@@ -30,6 +36,7 @@ public final class ErrorHandler {
     public ResponseEntity<Map<String, String>> handleConstraintViolationException(
         final ConstraintViolationException e
     ) {
+        log.error(e.getMessage());
         final Map<String, String> errorDetails = e.getConstraintViolations()
             .stream()
             .collect(toMap(
@@ -42,21 +49,29 @@ public final class ErrorHandler {
 
     @ExceptionHandler
     public ResponseEntity<String> handleDuplicateValueException(final DuplicateValueException e) {
+        log.error(e.getMessage());
+
         return new ResponseEntity<>(e.getMessage(), CONFLICT);
     }
 
     @ExceptionHandler
     public ResponseEntity<String> handleForbiddenException(final ForbiddenException e) {
+        log.error(e.getMessage());
+
         return new ResponseEntity<>(e.getMessage(), FORBIDDEN);
     }
 
     @ExceptionHandler
     public ResponseEntity<String> handleEntityNotFoundException(final EntityNotFoundException e) {
+        log.error(e.getMessage());
+
         return new ResponseEntity<>(e.getMessage(), NOT_FOUND);
     }
 
     @ExceptionHandler
     public ResponseEntity<String> handleThrowable(final Throwable e) {
+        log.error(e.getMessage());
+
         return new ResponseEntity<>(e.getMessage(), INTERNAL_SERVER_ERROR);
     }
 }

@@ -1,6 +1,6 @@
 package ru.practicum.shareit.user.controller;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.PatchUserDto;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 @RestController
 @RequestMapping(path = "/users")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 

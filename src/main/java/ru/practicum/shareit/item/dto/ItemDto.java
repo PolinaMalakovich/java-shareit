@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.Value;
-import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.constraints.NotBlank;
@@ -20,7 +19,7 @@ public class ItemDto {
     @NotNull
     Boolean available;
     UserDto owner;
-    ItemRequestDto request;
+    Long request;
 
     public boolean isAvailable() {
         return available;
@@ -52,7 +51,7 @@ public class ItemDto {
             new ItemDto(this.id, this.name, this.description, this.available, owner, this.request);
     }
 
-    public ItemDto withRequest(ItemRequestDto request) {
+    public ItemDto withRequest(long request) {
         return Objects.equals(this.request, request) ? this :
             new ItemDto(this.id, this.name, this.description, this.available, this.owner, request);
     }

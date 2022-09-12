@@ -4,16 +4,13 @@ import lombok.Value;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Value
 public class Item {
     Long id;
-    @NotBlank(message = "Name cannot be blank")
     String name;
-    @Size(max = 200, message = "Description cannot be longer than 200 characters")
     String description;
     boolean available;
     User owner;
@@ -28,7 +25,7 @@ public class Item {
             new Item(id, this.name, this.description, this.available, this.owner, this.request);
     }
 
-    public Item withName(@NotBlank(message = "Name cannot be blank") String name) {
+    public Item withName(String name) {
         return Objects.equals(this.name, name) ? this :
             new Item(this.id, name, this.description, this.available, this.owner, this.request);
     }

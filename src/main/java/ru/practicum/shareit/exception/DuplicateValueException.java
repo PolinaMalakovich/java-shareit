@@ -1,5 +1,10 @@
 package ru.practicum.shareit.exception;
 
+import lombok.EqualsAndHashCode;
+import lombok.Value;
+
+@Value
+@EqualsAndHashCode(callSuper = true)
 public class DuplicateValueException extends RuntimeException {
     String email;
 

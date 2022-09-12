@@ -1,18 +1,23 @@
 package ru.practicum.shareit.request.dao;
 
+import org.springframework.stereotype.Component;
 import ru.practicum.shareit.request.model.ItemRequest;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Component
 public class ItemRequestDaoImpl implements ItemRequestDao {
     private final Map<Long, ItemRequest> itemRequests = new HashMap<>();
-    private final long id = 1;
+    private long id = 1;
 
     @Override
     public ItemRequest addItemRequest(final ItemRequest itemRequest) {
-        throw new UnsupportedOperationException();
+        final ItemRequest newItemRequest = itemRequest.withId(id++);
+        itemRequests.put(newItemRequest.getId(), newItemRequest);
+
+        return newItemRequest;
     }
 
     @Override
@@ -22,11 +27,15 @@ public class ItemRequestDaoImpl implements ItemRequestDao {
 
     @Override
     public Optional<ItemRequest> updateItemRequest(final ItemRequest itemRequest) {
-        throw new UnsupportedOperationException();
+        return getItemRequest(itemRequest.getId())
+            .map(i -> {
+                itemRequests.replace(itemRequest.getId(), itemRequest);
+                return itemRequest;
+            });
     }
 
     @Override
     public Optional<ItemRequest> deleteItemRequest(final long id) {
-        throw new UnsupportedOperationException();
+        return Optional.ofNullable(itemRequests.remove(id));
     }
 }

@@ -1,6 +1,6 @@
 package ru.practicum.shareit.item.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.EntityNotFoundException;
@@ -10,6 +10,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ListItemDto;
 import ru.practicum.shareit.item.dto.PatchItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.dao.ItemRequestDao;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.dao.UserDao;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserMapper;
@@ -18,17 +20,26 @@ import java.util.stream.Stream;
 
 @Service
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final ItemDao itemDao;
     private final UserDao userDao;
+    private final ItemRequestDao itemRequestDao;
 
     @Override
     public ItemDto addItem(final long id, final ItemDto itemDto) {
         final UserDto owner = UserMapper.toUserDto(
             userDao.getUser(id).orElseThrow(() -> new EntityNotFoundException("User", id))
         );
-        final Item newItem = itemDao.addItem(ItemMapper.toItem(itemDto.withOwner(owner)));
+        final Long itemRequestId = itemDto.getRequest();
+        ItemRequest itemRequest = null;
+        if (itemRequestId != null) {
+            itemRequest = itemRequestDao.getItemRequest(itemRequestId)
+                .orElseThrow(() -> new EntityNotFoundException("Item request", id));
+        }
+        final Item newItem = itemDao.addItem(
+            ItemMapper.toItem(itemDto.withOwner(owner), itemRequest)
+        );
         log.info("New item created successfully.");
 
         return ItemMapper.toItemDto(newItem);
@@ -53,7 +64,13 @@ public class ItemServiceImpl implements ItemService {
             throw new ForbiddenException(id, itemId, "edit");
         }
         final ItemDto newItemDto = patchItemDto.patch(itemDto);
-        itemDao.updateItem(ItemMapper.toItem(newItemDto))
+        final Long itemRequestId = newItemDto.getRequest();
+        ItemRequest itemRequest = null;
+        if (itemRequestId != null) {
+            itemRequest = itemRequestDao.getItemRequest(itemRequestId)
+                .orElseThrow(() -> new EntityNotFoundException("Item request", id));
+        }
+        itemDao.updateItem(ItemMapper.toItem(newItemDto, itemRequest))
             .orElseThrow(() -> new EntityNotFoundException("Item", newItemDto.getId()));
         log.info("Item " + newItemDto.getId() + " updated successfully.");
 
