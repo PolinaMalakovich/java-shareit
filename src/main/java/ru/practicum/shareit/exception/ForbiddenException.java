@@ -6,14 +6,16 @@ import lombok.Value;
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class ForbiddenException extends RuntimeException {
-    long id;
-    long itemId;
+    long userId;
+    long entityId;
+    String entity;
     String action;
 
-    public ForbiddenException(final long id, final long itemId, String action) {
-        super("User " + id + " cannot " + action + " item " + itemId + ".");
-        this.id = id;
-        this.itemId = itemId;
+    public ForbiddenException(final long userId, final long entityId, final String entity, String action) {
+        super("User " + userId + " cannot " + action + " " + entity + " " + entityId + ".");
+        this.userId = userId;
+        this.entityId = entityId;
+        this.entity = entity;
         this.action = action;
     }
 }

@@ -14,7 +14,7 @@ public class ItemDto {
     @NotBlank(message = "Name cannot be blank")
     String name;
     @NotNull
-    @Size(max = 200, message = "Description cannot be longer than 200 characters")
+    @Size(max = 256, message = "Description cannot be longer than 256 characters")
     String description;
     @NotNull
     Boolean available;

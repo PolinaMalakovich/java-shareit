@@ -1,10 +1,12 @@
 package ru.practicum.shareit.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -48,6 +50,34 @@ public final class ErrorHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<String> handleItemUnavailableException(final ItemUnavailableException e) {
+        log.error(e.getMessage());
+
+        return new ResponseEntity<>(e.getMessage(), BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(final MethodArgumentTypeMismatchException e) {
+        log.error(e.getMessage());
+
+        return new ResponseEntity<>(Map.of("error", "Unknown state: UNSUPPORTED_STATUS"), BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handleIllegalArgumentException(final IllegalArgumentException e) {
+        log.error(e.getMessage());
+
+        return new ResponseEntity<>(e.getMessage(), BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handleUnauthorizedCommentException(final UnauthorizedCommentException e) {
+        log.error(e.getMessage());
+
+        return new ResponseEntity<>(e.getMessage(), BAD_REQUEST);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<String> handleDuplicateValueException(final DuplicateValueException e) {
         log.error(e.getMessage());
 
@@ -58,7 +88,7 @@ public final class ErrorHandler {
     public ResponseEntity<String> handleForbiddenException(final ForbiddenException e) {
         log.error(e.getMessage());
 
-        return new ResponseEntity<>(e.getMessage(), FORBIDDEN);
+        return new ResponseEntity<>(e.getMessage(), NOT_FOUND);
     }
 
     @ExceptionHandler
