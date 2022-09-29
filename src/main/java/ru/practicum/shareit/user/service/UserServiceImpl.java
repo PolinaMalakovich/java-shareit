@@ -12,7 +12,6 @@ import ru.practicum.shareit.user.model.User;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Slf4j

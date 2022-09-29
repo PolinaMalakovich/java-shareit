@@ -1,7 +1,6 @@
 package ru.practicum.shareit.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -57,7 +56,8 @@ public final class ErrorHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(final MethodArgumentTypeMismatchException e) {
+    public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(
+        final MethodArgumentTypeMismatchException e) {
         log.error(e.getMessage());
 
         return new ResponseEntity<>(Map.of("error", "Unknown state: UNSUPPORTED_STATUS"), BAD_REQUEST);

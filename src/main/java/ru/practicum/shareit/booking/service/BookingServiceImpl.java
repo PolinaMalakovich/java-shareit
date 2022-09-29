@@ -24,7 +24,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static ru.practicum.shareit.booking.service.BookingMapper.*;
+import static ru.practicum.shareit.booking.service.BookingMapper.toBooking;
+import static ru.practicum.shareit.booking.service.BookingMapper.toBookingDto;
 
 @Service
 @Slf4j

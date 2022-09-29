@@ -12,14 +12,18 @@ import java.util.stream.Stream;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     // all
     Stream<Booking> findBookingsByBooker_IdOrderByStartDesc(long id);
+
     // current
     Stream<Booking> findBookingsByBooker_IdAndStartIsBeforeAndEndIsAfter(long id,
                                                                          LocalDateTime checkStart,
                                                                          LocalDateTime checkEnd);
+
     // past
     Stream<Booking> findBookingsByBooker_IdAndEndIsBeforeOrderByStartDesc(long id, LocalDateTime dateTime);
+
     // future
     Stream<Booking> findBookingsByBooker_IdAndStartIsAfterOrderByStartDesc(long id, LocalDateTime dateTime);
+
     // waiting, rejected
     Stream<Booking> findBookingsByBooker_IdAndStatusOrderByStartDesc(long id, Status status);
 

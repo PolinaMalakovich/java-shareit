@@ -5,7 +5,7 @@ import lombok.Value;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
-public class UnauthorizedCommentException extends RuntimeException{
+public class UnauthorizedCommentException extends RuntimeException {
     long userId;
     long itemId;
 
