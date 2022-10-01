@@ -2,7 +2,9 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.NewBookingDto;
@@ -17,7 +19,6 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -30,12 +31,14 @@ import static ru.practicum.shareit.booking.service.BookingMapper.toBookingDto;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
 
     @Override
+    @Transactional
     public BookingDto addBooking(final long id, final NewBookingDto newBookingDto) {
         final User user = userRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("User", id));
@@ -72,10 +75,18 @@ public class BookingServiceImpl implements BookingService {
 
         switch (state) {
             case WAITING:
-                stream = bookingRepository.findBookingsByBooker_IdAndStatusOrderByStartDesc(id, Status.WAITING);
+                stream = bookingRepository.findBookingsByBooker_IdAndStatus(
+                    id,
+                    Status.WAITING,
+                    Sort.by(Sort.Direction.DESC, "start")
+                );
                 break;
             case REJECTED:
-                stream = bookingRepository.findBookingsByBooker_IdAndStatusOrderByStartDesc(id, Status.REJECTED);
+                stream = bookingRepository.findBookingsByBooker_IdAndStatus(
+                    id,
+                    Status.REJECTED,
+                    Sort.by(Sort.Direction.DESC, "start")
+                );
                 break;
             case CURRENT:
                 stream = bookingRepository.findBookingsByBooker_IdAndStartIsBeforeAndEndIsAfter(
@@ -86,15 +97,26 @@ public class BookingServiceImpl implements BookingService {
                 break;
             case PAST:
                 stream =
-                    bookingRepository.findBookingsByBooker_IdAndEndIsBeforeOrderByStartDesc(id, LocalDateTime.now());
+                    bookingRepository.findBookingsByBooker_IdAndEndIsBefore(
+                        id,
+                        LocalDateTime.now(),
+                        Sort.by(Sort.Direction.DESC, "start")
+                    );
                 break;
             case FUTURE:
                 stream =
-                    bookingRepository.findBookingsByBooker_IdAndStartIsAfterOrderByStartDesc(id, LocalDateTime.now());
+                    bookingRepository.findBookingsByBooker_IdAndStartIsAfter(
+                        id,
+                        LocalDateTime.now(),
+                        Sort.by(Sort.Direction.DESC, "start")
+                    );
                 break;
             case ALL:
             default:
-                stream = bookingRepository.findBookingsByBooker_IdOrderByStartDesc(id);
+                stream = bookingRepository.findBookingsByBooker_Id(
+                    id,
+                    Sort.by(Sort.Direction.DESC, "start")
+                );
                 break;
         }
 
@@ -109,23 +131,31 @@ public class BookingServiceImpl implements BookingService {
 
         switch (state) {
             case WAITING:
-                stream = bookingRepository.getBookingsByUserItemsWithState(id, Status.WAITING);
+                stream = bookingRepository.getBookingsByUserItemsWithState(
+                    id,
+                    Status.WAITING,
+                    Sort.by(Sort.Direction.DESC, "start")
+                );
                 break;
             case REJECTED:
-                stream = bookingRepository.getBookingsByUserItemsWithState(id, Status.REJECTED);
+                stream = bookingRepository.getBookingsByUserItemsWithState(
+                    id,
+                    Status.REJECTED,
+                    Sort.by(Sort.Direction.DESC, "start")
+                );
                 break;
             case CURRENT:
-                stream = bookingRepository.getBookingsByUserItemsCurrent(id);
+                stream = bookingRepository.getBookingsByUserItemsCurrent(id, Sort.by(Sort.Direction.DESC, "start"));
                 break;
             case PAST:
-                stream = bookingRepository.getBookingsByUserItemsPast(id);
+                stream = bookingRepository.getBookingsByUserItemsPast(id, Sort.by(Sort.Direction.DESC, "start"));
                 break;
             case FUTURE:
-                stream = bookingRepository.getBookingsByUserItemsFuture(id);
+                stream = bookingRepository.getBookingsByUserItemsFuture(id, Sort.by(Sort.Direction.DESC, "start"));
                 break;
             case ALL:
             default:
-                stream = bookingRepository.getBookingsByUserItems(id);
+                stream = bookingRepository.getBookingsByUserItems(id, Sort.by(Sort.Direction.DESC, "start"));
                 break;
         }
 
@@ -133,6 +163,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingDto approveOrRejectBooking(final long id, final long bookingId, final boolean approved) {
         final Booking booking = bookingRepository.findById(bookingId)
             .orElseThrow(() -> new EntityNotFoundException("Booking", bookingId));
@@ -145,10 +176,11 @@ public class BookingServiceImpl implements BookingService {
         }
         booking.setStatus(status);
 
-        return toBookingDto(bookingRepository.save(booking));
+        return toBookingDto(booking);
     }
 
     @Override
+    @Transactional
     public void deleteBooking(long id) {
         throw new UnsupportedOperationException();
     }

@@ -1,15 +1,18 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -21,13 +24,14 @@ public class Comment {
     private long id;
     @Column
     @NotBlank
+    @Size(max = 256, message = "Comment cannot be longer than 256 characters.")
     private String text;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "item_id")
     private Item item;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "author_id")
     private User author;
-    @Column
-    private LocalDateTime created;
+    @Column(nullable = false)
+    private LocalDateTime created = LocalDateTime.now();
 }

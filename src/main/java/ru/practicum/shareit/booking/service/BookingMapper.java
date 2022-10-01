@@ -10,17 +10,22 @@ import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemMapper;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.service.UserMapper;
+
+import static ru.practicum.shareit.booking.dto.BookingDto.BookedItem;
+import static ru.practicum.shareit.booking.dto.BookingDto.Booker;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BookingMapper {
     public static BookingDto toBookingDto(final Booking booking) {
+        Booker booker = new Booker(booking.getBooker().getId(), booking.getBooker().getName());
+        BookedItem item = new BookedItem(booking.getItem().getId(), booking.getItem().getName());
+
         return new BookingDto(
             booking.getId(),
             booking.getStart(),
             booking.getEnd(),
-            ItemMapper.toItemDto(booking.getItem()),
-            UserMapper.toUserDto(booking.getBooker()),
+            item,
+            booker,
             booking.getStatus());
     }
 

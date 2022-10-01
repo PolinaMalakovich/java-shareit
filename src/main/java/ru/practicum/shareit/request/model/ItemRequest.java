@@ -1,14 +1,17 @@
 package ru.practicum.shareit.request.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -19,9 +22,10 @@ public class ItemRequest {
     @Column(name = "request_id")
     private Long id;
     @Column
+    @Size(max = 256, message = "Description cannot be longer than 256 characters.")
     private String description;
-    @OneToOne
-    @JoinColumn(name = "requester_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "requester_id", nullable = false)
     private User requester;
     @Column
     private LocalDateTime created;

@@ -3,14 +3,17 @@ package ru.practicum.shareit.booking.dto;
 import lombok.Value;
 
 import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.Future;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Value
 public class NewBookingDto {
-    @Future
+    @NotNull
+    @FutureOrPresent
     LocalDateTime start;
-    @Future
+    @NotNull
+    @FutureOrPresent
     LocalDateTime end;
     long itemId;
 
