@@ -11,12 +11,4 @@ public class PatchUserDto {
     String name;
     @Email(message = "Email should be valid")
     String email;
-
-    public UserDto patch(UserDto userDto) {
-        return new UserDto(
-            userDto.getId(),
-            this.name == null ? userDto.getName() : this.name,
-            this.email == null ? userDto.getEmail() : this.email
-        );
-    }
 }

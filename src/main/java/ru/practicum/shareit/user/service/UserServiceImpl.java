@@ -13,6 +13,9 @@ import ru.practicum.shareit.user.model.User;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.practicum.shareit.user.service.UserMapper.toUserDto;
+import static ru.practicum.shareit.user.service.UserMapper.toUserDtoList;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -25,7 +28,7 @@ public class UserServiceImpl implements UserService {
     public UserDto addUser(final UserDto userDto) {
         final User user = UserMapper.toUser(userDto);
         final User newUser = userRepository.save(user);
-        final UserDto newUserDto = UserMapper.toUserDto(newUser);
+        final UserDto newUserDto = toUserDto(newUser);
         log.info("New user created successfully.");
 
         return newUserDto;
@@ -35,26 +38,27 @@ public class UserServiceImpl implements UserService {
     public UserDto getUser(final long id) {
         final User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
 
-        return UserMapper.toUserDto(user);
+        return toUserDto(user);
     }
 
     @Override
-    @Transactional
     public List<UserDto> getUsers() {
-        return userRepository.findAll().stream().map(UserMapper::toUserDto).collect(Collectors.toList());
+        return toUserDtoList(userRepository.findAll());
     }
 
     @Override
     @Transactional
     public UserDto updateUser(final long id, final PatchUserDto patchUserDto) {
-        final UserDto user = getUser(id);
-        final UserDto userDto = patchUserDto.patch(user);
-        userRepository.findById(userDto.getId())
-            .orElseThrow(() -> new EntityNotFoundException("User", userDto.getId()));
-        userRepository.save(UserMapper.toUser(userDto));
-        log.info("User " + userDto.getId() + " updated successfully.");
+        final User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
+        if (patchUserDto.getName() != null) {
+            user.setName(patchUserDto.getName());
+        }
+        if (patchUserDto.getEmail() != null) {
+            user.setEmail(patchUserDto.getEmail());
+        }
+        log.info("User " + user.getId() + " updated successfully.");
 
-        return userDto;
+        return toUserDto(user);
     }
 
     @Override

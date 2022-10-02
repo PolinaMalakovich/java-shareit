@@ -72,7 +72,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
     public ItemDtoWithCommentsAndBookings getItemWithCommentsAndBookings(final long id, final long itemId) {
         final Item item = itemRepository.findById(itemId)
             .orElseThrow(() -> new EntityNotFoundException("Item", itemId));
