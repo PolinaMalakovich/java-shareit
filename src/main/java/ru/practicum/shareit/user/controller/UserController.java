@@ -7,7 +7,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
-import java.util.stream.Stream;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/users")
@@ -26,7 +26,7 @@ public class UserController {
     }
 
     @GetMapping
-    public Stream<UserDto> getUsers() {
+    public List<UserDto> getUsers() {
         return userService.getUsers();
     }
 
