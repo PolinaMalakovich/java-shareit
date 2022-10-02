@@ -102,7 +102,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
     public List<ListItemDto> getItems(final long id) {
         return itemRepository.findByOwnerIdOrderById(id)
             .map(item -> toListItemDto(
@@ -155,7 +154,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
     public List<ItemDto> searchItem(final String text) {
         if (text.isBlank()) {
             return Collections.emptyList();
