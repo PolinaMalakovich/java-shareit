@@ -12,6 +12,9 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.NewBookingDto;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.exception.EntityNotFoundException;
+import ru.practicum.shareit.exception.ForbiddenException;
+import ru.practicum.shareit.exception.ItemUnavailableException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
@@ -27,12 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = BookingController.class)
 class BookingControllerTest {
-    @Autowired
-    ObjectMapper mapper;
-    @MockBean
-    BookingService bookingService;
-    @Autowired
-    private MockMvc mvc;
     private final User alice = new User(1L, "Alice", "alice.anderson@example.com");
     private final User john = new User(2L, "John", "john.doe@example.com");
     private final Item coffeeTable = new Item(3L, "Coffee table", "Old wooden coffee table", true, alice, null);
@@ -63,6 +60,12 @@ class BookingControllerTest {
     );
     private final String startDate = "2023-10-13T16:47:00";
     private final String endDate = "2023-10-15T16:47:00";
+    @Autowired
+    ObjectMapper mapper;
+    @MockBean
+    BookingService bookingService;
+    @Autowired
+    private MockMvc mvc;
 
     @Test
     void addBooking() throws Exception {
@@ -87,6 +90,54 @@ class BookingControllerTest {
     }
 
     @Test
+    void addBookingWhenNotFound() throws Exception {
+        Mockito
+            .when(bookingService.addBooking(anyLong(), any()))
+            .thenThrow(new EntityNotFoundException("User", john.getId()));
+
+        mvc.perform(
+                post("/bookings")
+                    .header("X-Sharer-User-Id", john.getId())
+                    .content(mapper.writeValueAsString(newBookingDto))
+                    .characterEncoding(StandardCharsets.UTF_8)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void addBookingWhenItemUnavailable() throws Exception {
+        Mockito
+            .when(bookingService.addBooking(anyLong(), any()))
+            .thenThrow(new ItemUnavailableException(coffeeTable.getId()));
+
+        mvc.perform(
+                post("/bookings")
+                    .header("X-Sharer-User-Id", john.getId())
+                    .content(mapper.writeValueAsString(newBookingDto))
+                    .characterEncoding(StandardCharsets.UTF_8)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void addBookingWhenForbidden() throws Exception {
+        Mockito
+            .when(bookingService.addBooking(anyLong(), any()))
+            .thenThrow(new ForbiddenException(alice.getId(), coffeeTable.getId(), "item", "book"));
+
+        mvc.perform(
+                post("/bookings")
+                    .header("X-Sharer-User-Id", alice.getId())
+                    .content(mapper.writeValueAsString(newBookingDto))
+                    .characterEncoding(StandardCharsets.UTF_8)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
     void approveOrRejectBooking() throws Exception {
         Mockito
             .when(bookingService.approveOrRejectBooking(anyLong(), anyLong(), eq(true)))
@@ -94,7 +145,7 @@ class BookingControllerTest {
 
         mvc.perform(
                 patch("/bookings/{bookingId}", bookingDto.getId())
-                    .header("X-Sharer-User-Id", john.getId())
+                    .header("X-Sharer-User-Id", alice.getId())
                     .param("approved", "true")
                     .characterEncoding(StandardCharsets.UTF_8)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -108,6 +159,22 @@ class BookingControllerTest {
             .andExpect(jsonPath("$.booker.id", is(approved.getBooker().getId()), Long.class))
             .andExpect(jsonPath("$.booker.name", is(approved.getBooker().getName())))
             .andExpect(jsonPath("$.status", is(approved.getStatus().name())));
+    }
+
+    @Test
+    void approveOrRejectBookingWhenIllegalArgument() throws Exception {
+        Mockito
+            .when(bookingService.approveOrRejectBooking(anyLong(), anyLong(), eq(true)))
+            .thenThrow(new IllegalArgumentException());
+
+        mvc.perform(
+                patch("/bookings/{bookingId}", bookingDto.getId())
+                    .header("X-Sharer-User-Id", alice.getId())
+                    .param("approved", "true")
+                    .characterEncoding(StandardCharsets.UTF_8)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isBadRequest());
     }
 
     @Test

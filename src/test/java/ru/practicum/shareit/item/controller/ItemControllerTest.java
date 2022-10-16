@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.dto.BookingDtoBookerId;
 import ru.practicum.shareit.booking.model.Status;
+import ru.practicum.shareit.exception.UnauthorizedCommentException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -28,12 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = ItemController.class)
 class ItemControllerTest {
-    @Autowired
-    ObjectMapper mapper;
-    @MockBean
-    ItemService itemService;
-    @Autowired
-    private MockMvc mvc;
     private final UserDto alice = new UserDto(1L, "Alice", "alice.anderson@example.com");
     private final UserDto john = new UserDto(2L, "John", "john.doe@example.com");
     private final ItemDto coffeeTable = new ItemDto(3L, "Coffee table", "Old wooden coffee table", true, alice, null);
@@ -45,7 +40,6 @@ class ItemControllerTest {
         john.getName(),
         LocalDateTime.of(2021, 10, 16, 16, 47, 0)
     );
-    private final String commentCreated = "2021-10-16T16:47:00";
     private final BookingDtoBookerId lastBooking = new BookingDtoBookerId(
         5L,
         LocalDateTime.of(2021, 10, 13, 16, 47, 0),
@@ -54,8 +48,6 @@ class ItemControllerTest {
         john.getId(),
         Status.APPROVED
     );
-    private final String lastBookingStart = "2021-10-13T16:47:00";
-    private final String lastBookingEnd = "2021-10-15T16:47:00";
     private final BookingDtoBookerId nextBooking = new BookingDtoBookerId(
         6L,
         LocalDateTime.of(2022, 10, 13, 16, 47, 0),
@@ -64,8 +56,6 @@ class ItemControllerTest {
         john.getId(),
         Status.APPROVED
     );
-    private final String nextBookingStart = "2022-10-13T16:47:00";
-    private final String nextBookingEnd = "2022-12-13T16:47:00";
     private final ItemDtoWithCommentsAndBookings tableWithCommentsAndBookings = new ItemDtoWithCommentsAndBookings(
         coffeeTable.getId(),
         coffeeTable.getName(),
@@ -91,6 +81,17 @@ class ItemControllerTest {
         coffeeTable.getDescription(),
         coffeeTable.isAvailable()
     );
+    private final String commentCreated = "2021-10-16T16:47:00";
+    private final String lastBookingStart = "2021-10-13T16:47:00";
+    private final String lastBookingEnd = "2021-10-15T16:47:00";
+    private final String nextBookingStart = "2022-10-13T16:47:00";
+    private final String nextBookingEnd = "2022-12-13T16:47:00";
+    @Autowired
+    ObjectMapper mapper;
+    @MockBean
+    ItemService itemService;
+    @Autowired
+    private MockMvc mvc;
 
     @Test
     void addItem() throws Exception {
@@ -360,5 +361,21 @@ class ItemControllerTest {
             .andExpect(jsonPath("$.authorId", is(niceComment.getAuthorId()), Long.class))
             .andExpect(jsonPath("$.authorName", is(niceComment.getAuthorName())))
             .andExpect(jsonPath("$.created", is(commentCreated)));
+    }
+
+    @Test
+    void addCommentWhenUnauthorized() throws Exception {
+        Mockito
+            .when(itemService.addComment(anyLong(), anyLong(), any()))
+            .thenThrow(new UnauthorizedCommentException(alice.getId(), coffeeTable.getId()));
+
+        mvc.perform(
+                post("/items/{itemId}/comment", coffeeTable.getId())
+                    .header("X-Sharer-User-Id", alice.getId())
+                    .content(mapper.writeValueAsString(niceComment))
+                    .characterEncoding(StandardCharsets.UTF_8)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isBadRequest());
     }
 }

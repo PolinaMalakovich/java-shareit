@@ -25,14 +25,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = UserController.class)
 class UserControllerTest {
+    private final UserDto alice = new UserDto(1L, "Alice", "alice.anderson@example.com");
+    private final PatchUserDto patchAlice = new PatchUserDto("Alice", "alice.anderson@example.com");
     @Autowired
     ObjectMapper mapper;
     @MockBean
     UserService userService;
     @Autowired
     private MockMvc mvc;
-    private final UserDto alice = new UserDto(1L, "Alice", "alice.anderson@example.com");
-    private final PatchUserDto patchAlice = new PatchUserDto("Alice", "alice.anderson@example.com");
 
     @Test
     void addUser() throws Exception {

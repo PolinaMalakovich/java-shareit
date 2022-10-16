@@ -28,12 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = ItemRequestController.class)
 class ItemRequestControllerTest {
-    @Autowired
-    ObjectMapper mapper;
-    @MockBean
-    ItemRequestService itemRequestService;
-    @Autowired
-    private MockMvc mvc;
     private final UserDto john = new UserDto(1L, "John", "john.doe@example.com");
     private final UserDto alice = new UserDto(2L, "Alice", "alice.anderson@example.com");
     private final ItemRequestDto tableRequest = new ItemRequestDto(
@@ -42,7 +36,6 @@ class ItemRequestControllerTest {
         john,
         LocalDateTime.of(2022, 10, 11, 15, 14, 0)
     );
-    private final String requestCreated = "2022-10-11T15:14:00";
     private final ItemDto coffeeTable = new ItemDto(
         3L,
         "Coffee table",
@@ -64,6 +57,13 @@ class ItemRequestControllerTest {
         tableRequest.getCreated(),
         List.of(tableForRequests)
     );
+    private final String requestCreated = "2022-10-11T15:14:00";
+    @Autowired
+    ObjectMapper mapper;
+    @MockBean
+    ItemRequestService itemRequestService;
+    @Autowired
+    private MockMvc mvc;
 
     @Test
     void addRequest() throws Exception {
