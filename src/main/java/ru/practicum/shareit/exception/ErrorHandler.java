@@ -78,13 +78,6 @@ public final class ErrorHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<String> handleDuplicateValueException(final DuplicateValueException e) {
-        log.error(e.getMessage());
-
-        return new ResponseEntity<>(e.getMessage(), CONFLICT);
-    }
-
-    @ExceptionHandler
     public ResponseEntity<String> handleForbiddenException(final ForbiddenException e) {
         log.error(e.getMessage());
 

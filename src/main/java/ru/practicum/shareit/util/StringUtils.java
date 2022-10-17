@@ -1,9 +1,8 @@
 package ru.practicum.shareit.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class StringUtils {
     public static String suffix(String line, char character) {
         int lastIndex = line.lastIndexOf(character) + 1;

@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,7 +70,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public List<BookingDto> getUserBookings(final long id, final State state) {
+    public List<BookingDto> getUserBookings(final long id, final State state, final int from, final int size) {
         userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
         final Stream<Booking> stream;
 
@@ -78,21 +79,22 @@ public class BookingServiceImpl implements BookingService {
                 stream = bookingRepository.findBookingsByBooker_IdAndStatus(
                     id,
                     Status.WAITING,
-                    Sort.by(Sort.Direction.DESC, "start")
+                    PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"))
                 );
                 break;
             case REJECTED:
                 stream = bookingRepository.findBookingsByBooker_IdAndStatus(
                     id,
                     Status.REJECTED,
-                    Sort.by(Sort.Direction.DESC, "start")
+                    PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"))
                 );
                 break;
             case CURRENT:
                 stream = bookingRepository.findBookingsByBooker_IdAndStartIsBeforeAndEndIsAfter(
                     id,
                     LocalDateTime.now(),
-                    LocalDateTime.now()
+                    LocalDateTime.now(),
+                    PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"))
                 );
                 break;
             case PAST:
@@ -100,7 +102,7 @@ public class BookingServiceImpl implements BookingService {
                     bookingRepository.findBookingsByBooker_IdAndEndIsBefore(
                         id,
                         LocalDateTime.now(),
-                        Sort.by(Sort.Direction.DESC, "start")
+                        PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"))
                     );
                 break;
             case FUTURE:
@@ -108,14 +110,14 @@ public class BookingServiceImpl implements BookingService {
                     bookingRepository.findBookingsByBooker_IdAndStartIsAfter(
                         id,
                         LocalDateTime.now(),
-                        Sort.by(Sort.Direction.DESC, "start")
+                        PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"))
                     );
                 break;
             case ALL:
             default:
                 stream = bookingRepository.findBookingsByBooker_Id(
                     id,
-                    Sort.by(Sort.Direction.DESC, "start")
+                    PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"))
                 );
                 break;
         }
@@ -125,7 +127,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public List<BookingDto> getBookingsByUserItems(final long id, State state) {
+    public List<BookingDto> getBookingsByUserItems(final long id, State state, final int from, final int size) {
         userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
         final Stream<Booking> stream;
 
@@ -134,28 +136,36 @@ public class BookingServiceImpl implements BookingService {
                 stream = bookingRepository.getBookingsByUserItemsWithState(
                     id,
                     Status.WAITING,
-                    Sort.by(Sort.Direction.DESC, "start")
+                    PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"))
                 );
                 break;
             case REJECTED:
                 stream = bookingRepository.getBookingsByUserItemsWithState(
                     id,
                     Status.REJECTED,
-                    Sort.by(Sort.Direction.DESC, "start")
+                    PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"))
                 );
                 break;
             case CURRENT:
-                stream = bookingRepository.getBookingsByUserItemsCurrent(id, Sort.by(Sort.Direction.DESC, "start"));
+                stream = bookingRepository.getBookingsByUserItemsCurrent(
+                    id, PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"))
+                );
                 break;
             case PAST:
-                stream = bookingRepository.getBookingsByUserItemsPast(id, Sort.by(Sort.Direction.DESC, "start"));
+                stream = bookingRepository.getBookingsByUserItemsPast(
+                    id, PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"))
+                );
                 break;
             case FUTURE:
-                stream = bookingRepository.getBookingsByUserItemsFuture(id, Sort.by(Sort.Direction.DESC, "start"));
+                stream = bookingRepository.getBookingsByUserItemsFuture(
+                    id, PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"))
+                );
                 break;
             case ALL:
             default:
-                stream = bookingRepository.getBookingsByUserItems(id, Sort.by(Sort.Direction.DESC, "start"));
+                stream = bookingRepository.getBookingsByUserItems(
+                    id, PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"))
+                );
                 break;
         }
 

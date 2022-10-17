@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoBookerId;
 import ru.practicum.shareit.booking.dto.NewBookingDto;
@@ -14,7 +13,7 @@ import ru.practicum.shareit.user.model.User;
 import static ru.practicum.shareit.booking.dto.BookingDto.BookedItem;
 import static ru.practicum.shareit.booking.dto.BookingDto.Booker;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class BookingMapper {
     public static BookingDto toBookingDto(final Booking booking) {
         Booker booker = new Booker(booking.getBooker().getId(), booking.getBooker().getName());

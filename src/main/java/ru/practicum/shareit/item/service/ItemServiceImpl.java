@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingRepository;
@@ -50,7 +51,7 @@ public class ItemServiceImpl implements ItemService {
         final UserDto owner = UserMapper.toUserDto(
             userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id))
         );
-        final Long itemRequestId = itemDto.getRequest();
+        final Long itemRequestId = itemDto.getRequestId();
         ItemRequest itemRequest = null;
         if (itemRequestId != null) {
             itemRequest = requestRepository.findById(itemRequestId)
@@ -102,8 +103,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ListItemDto> getItems(final long id) {
-        return itemRepository.findByOwnerIdOrderById(id)
+    public List<ListItemDto> getItems(final long id, final int from, final int size) {
+        return itemRepository.findByOwnerIdOrderById(id, PageRequest.of(from / size, size))
             .map(item -> toListItemDto(
                 item,
                 commentRepository
@@ -148,18 +149,19 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getOwner().getId() != id) {
             throw new ForbiddenException(id, itemId, "item", "delete");
         }
-        itemRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Item", id));
-        itemRepository.deleteById(id);
-        log.info("Item " + id + " deleted successfully.");
+        itemRepository.deleteById(itemId);
+        log.info("Item " + itemId + " deleted successfully.");
     }
 
     @Override
-    public List<ItemDto> searchItem(final String text) {
+    public List<ItemDto> searchItem(final String text, int from, int size) {
         if (text.isBlank()) {
             return Collections.emptyList();
         }
 
-        return itemRepository.searchItem(text).map(ItemMapper::toItemDto).collect(Collectors.toList());
+        return itemRepository.searchItem(text, PageRequest.of(from / size, size))
+            .map(ItemMapper::toItemDto)
+            .collect(Collectors.toList());
     }
 
     @Override

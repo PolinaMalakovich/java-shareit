@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -34,4 +35,19 @@ public class Comment {
     private User author;
     @Column(nullable = false)
     private LocalDateTime created = LocalDateTime.now();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Comment comment = (Comment) o;
+        return id == comment.id && Objects.equals(text, comment.text) &&
+            Objects.equals(item, comment.item) && Objects.equals(author, comment.author) &&
+            Objects.equals(created, comment.created);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, text, item, author, created);
+    }
 }
