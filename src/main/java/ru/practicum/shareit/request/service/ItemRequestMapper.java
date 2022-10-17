@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request.service;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.item.dto.ItemDtoForRequests;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoWithAnswers;
@@ -9,6 +10,7 @@ import ru.practicum.shareit.user.service.UserMapper;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@UtilityClass
 public class ItemRequestMapper {
     public static ItemRequestDto toItemRequestDto(final ItemRequest itemRequest) {
         return new ItemRequestDto(
