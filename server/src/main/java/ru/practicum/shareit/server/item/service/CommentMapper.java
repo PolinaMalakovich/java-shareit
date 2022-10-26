@@ -1,10 +1,10 @@
 package ru.practicum.shareit.server.item.service;
 
 import lombok.experimental.UtilityClass;
+import ru.practicum.shareit.dto.item.CommentDto;
 import ru.practicum.shareit.server.item.model.Comment;
 import ru.practicum.shareit.server.item.model.Item;
 import ru.practicum.shareit.server.user.model.User;
-import ru.practicum.shareit.dto.item.*;
 
 import java.time.LocalDateTime;
 

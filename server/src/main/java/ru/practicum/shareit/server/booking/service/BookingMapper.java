@@ -1,9 +1,11 @@
 package ru.practicum.shareit.server.booking.service;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.shareit.dto.booking.*;
-import ru.practicum.shareit.server.booking.model.Booking;
+import ru.practicum.shareit.dto.booking.BookingDto;
+import ru.practicum.shareit.dto.booking.BookingDtoBookerId;
+import ru.practicum.shareit.dto.booking.NewBookingDto;
 import ru.practicum.shareit.dto.booking.Status;
+import ru.practicum.shareit.server.booking.model.Booking;
 import ru.practicum.shareit.server.item.model.Item;
 import ru.practicum.shareit.server.item.service.ItemMapper;
 import ru.practicum.shareit.server.user.model.User;

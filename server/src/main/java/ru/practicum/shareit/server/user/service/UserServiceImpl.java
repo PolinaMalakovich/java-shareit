@@ -4,9 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.dto.user.PatchUserDto;
+import ru.practicum.shareit.dto.user.UserDto;
 import ru.practicum.shareit.server.exception.EntityNotFoundException;
 import ru.practicum.shareit.server.user.UserRepository;
-import ru.practicum.shareit.dto.user.*;
 import ru.practicum.shareit.server.user.model.User;
 
 import java.util.List;

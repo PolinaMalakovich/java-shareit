@@ -1,7 +1,7 @@
 package ru.practicum.shareit.server.user.service;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.shareit.dto.user.*;
+import ru.practicum.shareit.dto.user.UserDto;
 import ru.practicum.shareit.server.user.model.User;
 
 import java.util.List;

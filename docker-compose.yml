@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13.7-alpine
+    volumes:
+      - /var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=shareit
+      - POSTGRES_USER=shareituser
+      - POSTGRES_PASSWORD=shareit
+
+  server:
+    build: server
+    ports:
+      - "9090:8080"
+    depends_on:
+      - db
+    environment:
+      - DB_NAME=shareit
+      - POSTGRES_USER=shareituser
+      - POSTGRES_PASSWORD=shareit
+      - DB_HOST=db
+      - DB_PORT=5432
+
+  gateway:
+    build: gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - server
+    environment:
+      - SHATEIT_SCHEMA=http
+      - SHATEIT_HOST=server
+      - SHATEIT_PORT=8080

@@ -3,8 +3,8 @@ package ru.practicum.shareit.server.booking;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import ru.practicum.shareit.server.booking.model.Booking;
 import ru.practicum.shareit.dto.booking.Status;
+import ru.practicum.shareit.server.booking.model.Booking;
 
 import java.time.LocalDateTime;
 import java.util.Optional;

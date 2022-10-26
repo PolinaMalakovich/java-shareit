@@ -1,8 +1,9 @@
 package ru.practicum.shareit.server.request.service;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.shareit.dto.request.*;
-import ru.practicum.shareit.dto.item.*;
+import ru.practicum.shareit.dto.item.ItemDtoForRequests;
+import ru.practicum.shareit.dto.request.ItemRequestDto;
+import ru.practicum.shareit.dto.request.ItemRequestDtoWithAnswers;
 import ru.practicum.shareit.server.request.model.ItemRequest;
 import ru.practicum.shareit.server.user.service.UserMapper;
 
